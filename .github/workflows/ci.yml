@@ -1,0 +1,52 @@
+name: Run YAML on Push
+
+
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+
+
+jobs:
+
+  run-yaml:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+
+        uses: actions/checkout@v3
+
+
+
+      - name: Set up Python
+
+        uses: actions/setup-python@v4
+
+        with:
+
+          python-version: '3.12.5'  # Set this to the version you need
+
+
+
+      - name: Install dependencies
+
+        run: |
+
+          pip install -r requirements.txt  #Install any dependencies your script needs
+
+
+
+      - name: Run YAML File
+
+        run: |
+
+          python path/to/your/script.py  #Replace this with the command to execute your YAML file
+
