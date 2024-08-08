@@ -6,63 +6,63 @@
     - cisco.ios
     - ansible.netcommon
   vars:
-    port_Gi1/0/1_name: GigabitEthernet1/0/1
-    port_Gi1/0/1_description: "New port configuration"
-    port_Gi1/0/1_vlan: 10
-    port_Gi1/0/1_mode: access
+    port_Gi101_name: GigabitEthernet1/0/1
+    port_Gi101_description: "New port configuration"
+    port_Gi101_vlan: 10
+    port_Gi101_mode: access
 
-    port_Gi1/0/2_name: GigabitEthernet1/0/2
-    port_Gi1/0/2_description: "New port configuration2"
-    port_Gi1/0/2_vlan: 12
-    port_Gi1/0/2_mode: access
-
-  tasks:
-    - name: Configure interface description
-      ios_config:
-        lines:
-          - description "{{ port_Gi1/0/1_description }}"
-        parents: "interface {{ port_Gi1/0/1_name }}"
-
-    - name: Configure switchport mode
-      ios_config:
-        lines:
-          - switchport mode {{ port_Gi1/0/1_mode }}
-        parents: "interface {{ port_Gi1/0/1_name }}"
-
-    - name: Configure access vlan
-      ios_config:
-        lines:
-          - switchport access vlan {{ port_Gi1/0/1_vlan }}
-        parents: "interface {{ port_Gi1/0/1_name }}"
-
-    - name: Ensure the interface is up
-      ios_config:
-        lines:
-          - no shutdown
-        parents: "interface {{ port_Gi1/0/1_name }}"
-
+    port_Gi102_name: GigabitEthernet1/0/2
+    port_Gi102_description: "New port configuration2"
+    port_Gi102_vlan: 12
+    port_Gi102_mode: access
 
   tasks:
     - name: Configure interface description
       ios_config:
         lines:
-          - description "{{ port_Gi1/0/2_description }}"
-        parents: "interface {{ port_Gi1/0/2_name }}"
+          - description "{{ port_Gi101_description }}"
+        parents: "interface {{ port_Gi102_name }}"
 
     - name: Configure switchport mode
       ios_config:
         lines:
-          - switchport mode {{ port_Gi1/0/2_mode }}
-        parents: "interface {{ port_Gi1/0/2_name }}"
+          - switchport mode {{ port_Gi101_mode }}
+        parents: "interface {{ port_Gi101_name }}"
 
     - name: Configure access vlan
       ios_config:
         lines:
-          - switchport access vlan {{ port_Gi1/0/2_vlan }}
-        parents: "interface {{ port_Gi1/0/2_name }}"
+          - switchport access vlan {{ port_Gi101_vlan }}
+        parents: "interface {{ port_Gi101_name }}"
 
     - name: Ensure the interface is up
       ios_config:
         lines:
           - no shutdown
-        parents: "interface {{ port_Gi1/0/2_name }}"
+        parents: "interface {{ port_Gi101_name }}"
+
+
+  tasks:
+    - name: Configure interface description
+      ios_config:
+        lines:
+          - description "{{ port_Gi102_description }}"
+        parents: "interface {{ port_Gi102_name }}"
+
+    - name: Configure switchport mode
+      ios_config:
+        lines:
+          - switchport mode {{ port_Gi102_mode }}
+        parents: "interface {{ port_Gi102_name }}"
+
+    - name: Configure access vlan
+      ios_config:
+        lines:
+          - switchport access vlan {{ port_Gi102_vlan }}
+        parents: "interface {{ port_Gi102_name }}"
+
+    - name: Ensure the interface is up
+      ios_config:
+        lines:
+          - no shutdown
+        parents: "interface {{ port_Gi102_name }}"
