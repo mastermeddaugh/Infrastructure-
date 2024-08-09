@@ -41,8 +41,6 @@
           - no shutdown
         parents: "interface {{ port_Gi101_name }}"
 
-
-  tasks:
     - name: Configure interface description
       ios_config:
         lines:
