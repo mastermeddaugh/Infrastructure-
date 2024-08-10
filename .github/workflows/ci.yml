@@ -9,7 +9,7 @@ on:
       playbook:
         description: 'Path to the playbook to run'
         required: true
-        default: 'ansible/playbooks/example-playbook.yml'
+        default: '/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/example-playbook.yml'
 
 jobs:
   run-ansible:
@@ -18,18 +18,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10.12'
-
-      - name: Check Python Version
-        run: python3 --version
-
-      - name: Install dependencies
-        run: |
-          pip install ansible
-
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -i ansible/inventory ${{ github.event.inputs.playbook }}
+          ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory ${{ github.event.inputs.playbook }}
