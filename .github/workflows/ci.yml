@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,7 +23,13 @@ jobs:
       - name: Get the changed playbooks
         id: changed-playbooks
         run: |
-          git diff --name-only HEAD^ HEAD > changed_files.txt
+          # Ensure we have a previous commit to compare against
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            git diff --name-only HEAD~1 HEAD > changed_files.txt
+          else
+            echo "No previous commit found."
+            touch changed_files.txt
+          fi
           grep "^Ansible/playbooks/.*\.yml" changed_files.txt > playbooks.txt || echo "No playbooks changed" > playbooks.txt
 
       - name: Display the playbooks that changed
