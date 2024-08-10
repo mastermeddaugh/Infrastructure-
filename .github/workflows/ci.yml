@@ -25,9 +25,9 @@ jobs:
       - name: Verify Directory Structure
         run: |
           echo "Listing playbooks directory:"
-          ls -l /home/meddaugh/ansible/github-repo/github-repo/Ansible/playbooks || echo "Playbooks directory does not exist"
+          ls -l /home/runner/work/github-repo/github-repo/Ansible/playbooks || echo "Playbooks directory does not exist"
           echo "Listing inventory directory:"
-          ls -l /home/meddaugh/ansible/github-repo/github-repo/Ansible/inventory || echo "Inventory directory does not exist"
+          ls -l /home/runner/work/github-repo/github-repo/Ansible/inventory || echo "Inventory directory does not exist"
 
       - name: Get the changed playbooks
         id: changed-playbooks
@@ -48,7 +48,7 @@ jobs:
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
-              ansible-playbook -i /home/meddaugh/ansible/github-repo/github-repo/Ansible/inventory "/home/meddaugh/ansible/github-repo/github-repo/Ansible/playbooks/$relative_playbook"
+              ansible-playbook -i /home/runner/work/github-repo/github-repo/Ansible/inventory "/home/runner/work/github-repo/github-repo/Ansible/playbooks/$relative_playbook"
             done < playbooks.txt
           else
             echo "No playbooks to run."
