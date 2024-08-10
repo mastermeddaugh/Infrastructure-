@@ -47,7 +47,7 @@ jobs:
 
       - name: Display the playbooks that changed
         run: cat playbooks.txt
-
+        
       - name: Run Ansible Playbooks
         if: success()
         run: |
@@ -63,4 +63,6 @@ jobs:
             done < playbooks.txt
           else
             echo "No playbooks to run."
+            exit 0
           fi
+      
