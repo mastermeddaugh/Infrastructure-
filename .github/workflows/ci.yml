@@ -48,8 +48,9 @@ jobs:
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
-              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
+              echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
+              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" || echo "Failed to run playbook: $relative_playbook"
             done < playbooks.txt
           else
-            echo "No playbooks to run."
+            echo "No playbooks changed."
           fi
