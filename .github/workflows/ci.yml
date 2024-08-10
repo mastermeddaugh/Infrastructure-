@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
       - name: Verify Directory Structure
         run: |
@@ -47,17 +47,14 @@ jobs:
           echo "[defaults]" > ansible.cfg
           echo "transport = ssh" >> ansible.cfg
 
-      - name: Run Ansible Playbooks
-        if: success()
+      - name: Check for playbooks and run them
+        id: run-playbooks
         run: |
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
               echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              if ! ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"; then
-                echo "Failed to run playbook: $relative_playbook"
-                exit 1
-              fi
+              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
             done < playbooks.txt
           else
             echo "No playbooks to run."
