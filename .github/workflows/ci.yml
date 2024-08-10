@@ -4,28 +4,36 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      playbook:
-        description: 'Path to the playbook to run'
-        required: true
-        default: '/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/example-playbook.yml'
 
 jobs:
-  run-ansible:
+  run-playbook:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-         python-version: '3.10.12'
+          python-version: 3.10.12
 
-      - name: Check Python Version
-        run: python3 --version
-     
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Get the changed playbooks
+        id: changed-playbooks
+        run: |
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          grep "^Ansible/playbooks/.*\.yml" changed_files.txt > playbooks.txt || echo "No playbooks changed" > playbooks.txt
+
+      - name: Display the playbooks that changed
+        run: cat playbooks.txt
 
       - name: Run Ansible Playbook
-        run: | 
-          ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory ${{ github.event.inputs.playbook }}
+        if: success()
+        run: |
+          if [ -s playbooks.txt ]; then
+            while IFS= read -r playbook; do
+              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/$playbook"
+            done < playbooks.txt
+          else
+            echo "No playbooks to run."
+          fi
