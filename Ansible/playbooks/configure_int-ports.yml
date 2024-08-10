@@ -6,7 +6,7 @@
     - cisco.ios
     - ansible.netcommon
   vars:
-    port_name: GigabitEthernet1/0/11
+    port_name: GigabitEthernet1/0/10
     port_description: "New port configuration"
     port_vlan: 10
     port_mode: access
