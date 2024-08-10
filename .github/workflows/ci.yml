@@ -40,9 +40,13 @@ jobs:
       - name: Display the playbooks that changed
         run: cat playbooks.txt
 
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install paramiko
+
       - name: Verify Paramiko Installation
         run: |
-          python -c "import paramiko; print(paramiko.__version__)"
           python -m pip show paramiko
 
       - name: Create Minimal Ansible Configuration
@@ -68,7 +72,7 @@ jobs:
               # Remove leading path segments to get relative path
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
               echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              python -m ansible.playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
+              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
             done < playbooks.txt
           else
             echo "No playbooks to run."
