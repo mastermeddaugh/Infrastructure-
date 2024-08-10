@@ -48,7 +48,6 @@ jobs:
           echo "inventory = /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory" >> ansible.cfg
           echo "[ssh_connection]" >> ansible.cfg
           echo "ssh_args = -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" >> ansible.cfg
-          echo "[defaults]" >> ansible.cfg
           echo "remote_user = admin" >> ansible.cfg
           echo "ansible_ssh_pass = admin" >> ansible.cfg
 
