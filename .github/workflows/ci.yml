@@ -13,7 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Ensure that we have at least two commits for comparison
+          fetch-depth: 2
+
+      - name: Install Ansible and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install ansible paramiko
 
       - name: Verify Directory Structure
         run: |
@@ -36,19 +42,17 @@ jobs:
       - name: Display the playbooks that changed
         run: cat playbooks.txt
 
-      - name: Install Ansible and dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install ansible paramiko
-
-      - name: Setup Ansible Configuration
+      - name: Create Ansible configuration
         run: |
           echo "[defaults]" > ansible.cfg
-          echo "transport = ssh" >> ansible.cfg
+          echo "inventory = /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory" >> ansible.cfg
+          echo "[ssh_connection]" >> ansible.cfg
+          echo "ssh_args = -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" >> ansible.cfg
+          echo "[defaults]" >> ansible.cfg
+          echo "remote_user = admin" >> ansible.cfg
+          echo "ansible_ssh_pass = admin" >> ansible.cfg
 
       - name: Check for playbooks and run them
-        id: run-playbooks
         run: |
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
