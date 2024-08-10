@@ -18,12 +18,13 @@ jobs:
       - name: List files in playbooks directory
         run: ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks
 
-        - name: Verify Directory Structure
-          run: |
-           echo "Listing playbooks directory:"
-           ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks
-           echo "Listing inventory directory:"
-           ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory
+      - name: Verify Directory Structure
+        run: |
+          echo "Listing playbooks directory:"
+          ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks
+          echo "Listing inventory directory:"
+          ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory
+         
 
       - name: Get the changed playbooks
         id: changed-playbooks
