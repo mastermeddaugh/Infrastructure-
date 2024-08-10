@@ -40,14 +40,14 @@ jobs:
       - name: Display the playbooks that changed
         run: cat playbooks.txt
 
-      - name: Install Dependencies
+      - name: Install Dependencies in pipx Environment
         run: |
-          python -m pip install --upgrade pip
-          pip install paramiko
+          pipx install ansible-core
+          pipx run python -m pip install ansible-pylibssh
 
-      - name: Verify Paramiko Installation
+      - name: Verify `ansible-pylibssh` Installation
         run: |
-          python -m pip show paramiko
+          pipx run python -m pip show ansible-pylibssh
 
       - name: Create Minimal Ansible Configuration
         run: |
@@ -59,10 +59,10 @@ jobs:
 
       - name: Print Environment Details
         run: |
-          python --version
-          which python
-          pip --version
-          pip list
+          pipx run python --version
+          pipx run which python
+          pipx run pip --version
+          pipx run pip list
 
       - name: Run Ansible Playbooks
         if: success()
@@ -72,7 +72,7 @@ jobs:
               # Remove leading path segments to get relative path
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
               echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
+              pipx run ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
             done < playbooks.txt
           else
             echo "No playbooks to run."
