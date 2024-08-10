@@ -29,6 +29,10 @@ jobs:
           echo "Listing inventory directory:"
           ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory || echo "Inventory directory does not exist"
 
+      - name: Install Python Packages
+        run: |
+          pip install paramiko
+
       - name: Get the changed playbooks
         id: changed-playbooks
         run: |
