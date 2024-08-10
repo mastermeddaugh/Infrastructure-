@@ -15,6 +15,13 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Debug Checkout Directory
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing files in the current working directory:"
+          ls -la
+
       - name: Verify Directory Structure
         run: |
           echo "Listing playbooks directory:"
