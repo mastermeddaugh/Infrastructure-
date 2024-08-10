@@ -29,6 +29,11 @@ jobs:
           echo "Listing inventory directory:"
           ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory || echo "Inventory directory does not exist"
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install paramiko
+
       - name: Get the changed playbooks
         id: changed-playbooks
         run: |
@@ -44,13 +49,18 @@ jobs:
         run: cat playbooks.txt
 
       - name: Run Ansible Playbooks
+        if: success()
         run: |
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
+              # Remove leading path segments to get relative path
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
               echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" || echo "Failed to run playbook: $relative_playbook"
+              if ! ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"; then
+                echo "Failed to run playbook: $relative_playbook"
+                exit 1
+              fi
             done < playbooks.txt
           else
-            echo "No playbooks changed."
+            echo "No playbooks to run."
           fi
