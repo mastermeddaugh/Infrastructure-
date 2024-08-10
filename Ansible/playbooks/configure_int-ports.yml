@@ -1,66 +1,54 @@
----
-- name: Configure a new port on Cisco switch
-  hosts: switches
-  gather_facts: no
-  collections:
-    - cisco.ios
-    - ansible.netcommon
-  vars:
-    port_Gi101_name: GigabitEthernet1/0/10
-    port_Gi101_description: "New port configuration"
-    port_Gi101_vlan: 10
-    port_Gi101_mode: access
+name: Run Ansible Playbook
 
-    port_Gi102_name: GigabitEthernet1/0/2
-    port_Gi102_description: "New port configuration2"
-    port_Gi102_vlan: 12
-    port_Gi102_mode: access
+on:
+  push:
+    branches:
+      - main
 
-  tasks:
-    - name: Configure interface description
-      ios_config:
-        lines:
-          - description "{{ port_Gi101_description }}"
-        parents: "interface {{ port_Gi102_name }}"
+jobs:
+  run-playbook:
+    runs-on: ubuntu-latest
 
-    - name: Configure switchport mode
-      ios_config:
-        lines:
-          - switchport mode {{ port_Gi101_mode }}
-        parents: "interface {{ port_Gi101_name }}"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
-    - name: Configure access vlan
-      ios_config:
-        lines:
-          - switchport access vlan {{ port_Gi101_vlan }}
-        parents: "interface {{ port_Gi101_name }}"
+      - name: List files in playbooks directory
+        run: ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks
 
-    - name: Ensure the interface is up
-      ios_config:
-        lines:
-          - no shutdown
-        parents: "interface {{ port_Gi101_name }}"
+        - name: Verify Directory Structure
+          run: |
+           echo "Listing playbooks directory:"
+           ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks
+           echo "Listing inventory directory:"
+           ls -l /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory
 
-    - name: Configure interface description
-      ios_config:
-        lines:
-          - description "{{ port_Gi102_description }}"
-        parents: "interface {{ port_Gi102_name }}"
+      - name: Get the changed playbooks
+        id: changed-playbooks
+        run: |
+          # Ensure we have a previous commit to compare against
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            git diff --name-only HEAD~1 HEAD > changed_files.txt
+          else
+            echo "No previous commit found."
+            touch changed_files.txt
+          fi
+          grep "^Ansible/playbooks/.*\.yml" changed_files.txt > playbooks.txt || echo "No playbooks changed" > playbooks.txt
 
-    - name: Configure switchport mode
-      ios_config:
-        lines:
-          - switchport mode {{ port_Gi102_mode }}
-        parents: "interface {{ port_Gi102_name }}"
+      - name: Display the playbooks that changed
+        run: cat playbooks.txt
 
-    - name: Configure access vlan
-      ios_config:
-        lines:
-          - switchport access vlan {{ port_Gi102_vlan }}
-        parents: "interface {{ port_Gi102_name }}"
-
-    - name: Ensure the interface is up
-      ios_config:
-        lines:
-          - no shutdown
-        parents: "interface {{ port_Gi102_name }}"
+      - name: Run Ansible Playbooks
+        if: success()
+        run: |
+          if [ -s playbooks.txt ]; then
+            while IFS= read -r playbook; do
+              # Remove leading path segments to get relative path
+              relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
+              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/$relative_playbook"
+            done < playbooks.txt
+          else
+            echo "No playbooks to run."
+          fi
