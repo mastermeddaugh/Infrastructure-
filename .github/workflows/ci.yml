@@ -13,30 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
-      - name: Debug Checkout Directory
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing files in the current working directory:"
-          ls -la
+      - name: List files in playbooks directory
+        run: ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
 
       - name: Verify Directory Structure
         run: |
           echo "Listing playbooks directory:"
-          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks || echo "Playbooks directory does not exist"
+          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
           echo "Listing inventory directory:"
-          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory || echo "Inventory directory does not exist"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install paramiko
+          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory
 
       - name: Get the changed playbooks
         id: changed-playbooks
         run: |
+          # Ensure we have a previous commit to compare against
           if [ $(git rev-list --count HEAD) -gt 1 ]; then
             git diff --name-only HEAD~1 HEAD > changed_files.txt
           else
@@ -47,7 +39,13 @@ jobs:
 
       - name: Display the playbooks that changed
         run: cat playbooks.txt
-        
+
+      - name: Install Ansible dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install paramiko
+
       - name: Run Ansible Playbooks
         if: success()
         run: |
@@ -65,4 +63,3 @@ jobs:
             echo "No playbooks to run."
             exit 0
           fi
-      
