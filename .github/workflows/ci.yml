@@ -40,7 +40,9 @@ jobs:
         run: |
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
-              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/$playbook"
+              # Remove leading path segments to get relative path
+              relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
+              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/$relative_playbook"
             done < playbooks.txt
           else
             echo "No playbooks to run."
