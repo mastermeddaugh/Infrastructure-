@@ -1,10 +1,18 @@
-name: Run YAML on Push
+name: Run Ansible Playbook
+
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      playbook:
+        description: 'Path to the playbook to run'
+        required: true
+        default: 'ansible/playbooks/example-playbook.yml'
+
 jobs:
-  run-yaml:
+  run-ansible:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -13,13 +21,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.5'  # Set this to the version you need
+          python-version: '3.10.12'  # Align with your local environment
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  #Install any dependencies your script needs
+          pip install ansible
 
-      - name: Run YAML File
+      - name: Run Ansible Playbook
         run: |
-          python path/to/your/script.py  #Replace this with the command to execute your YAML file
-  
+          ansible-playbook -i ansible/inventory ${{ github.event.inputs.playbook }}
