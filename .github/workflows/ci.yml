@@ -40,7 +40,7 @@ jobs:
         run: |
           if [ -s playbooks.txt ]; then
             while IFS= read -r playbook; do
-              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/Ansible/playbooks/$playbook"
+              ansible-playbook -i /home/meddaugh/ansible/github-infrastructure-repo/Ansible/inventory "/home/meddaugh/ansible/github-infrastructure-repo/$playbook"
             done < playbooks.txt
           else
             echo "No playbooks to run."
