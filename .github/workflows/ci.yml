@@ -36,10 +36,9 @@ jobs:
         run: pipx inject ansible-core paramiko
 
       - name: Run Ansible Playbook
-        run: ansible-playbook Ansible/playbooks/configure_int-ports.yml
+        run: |
+          ansible-playbook Ansible/playbooks/configure_int-ports.yml \
+          -i /home/runner/work/<REPO_NAME>/Ansible/inventory/hosts \
+          --log-path ansible.log
         env:
           ANSIBLE_CONFIG: Ansible/ansible.cfg
-
-      - name: Verify playbook success
-        if: failure()
-        run: exit 1
