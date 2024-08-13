@@ -35,6 +35,31 @@ jobs:
       - name: Install Paramiko
         run: pipx inject ansible-core paramiko
 
+      - name: List files in playbooks directory
+        run: ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
+
+      - name: Verify Directory Structure
+        run: |
+          echo "Listing playbooks directory:"
+          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
+          echo "Listing inventory directory:"
+          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory
+
+      - name: Get the changed playbooks
+        id: changed-playbooks
+        run: |
+          # Ensure we have a previous commit to compare against
+          if [ $(git rev-list --count HEAD) -gt 1 ]; then
+            git diff --name-only HEAD~1 HEAD > changed_files.txt
+          else
+            echo "No previous commit found."
+            touch changed_files.txt
+          fi
+          grep "^Ansible/playbooks/.*\.yml" changed_files.txt > playbooks.txt || echo "No playbooks changed" > playbooks.txt
+
+      - name: Display the playbooks that changed
+        run: cat playbooks.txt
+
       - name: Run Ansible Playbooks
         if: success()
         run: |
@@ -43,9 +68,10 @@ jobs:
               # Remove leading path segments to get relative path
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
               echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              pipx run ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
+              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
             done < playbooks.txt
           else
             echo "No playbooks to run."
             exit 0
           fi
+
