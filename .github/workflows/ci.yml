@@ -1,39 +1,19 @@
-name: CI
+name: Run Ansible Playbook
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  ansible-playbook:
+  run-playbook:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v4
         with:
-          python-version: '3.10'
-
-      - name: Install pipx
-        run: |
-          python -m pip install --user pipx
-          python -m pipx ensurepath
-
-      - name: Install Ansible Core
-        run: pipx install ansible-core
-
-      - name: Install ansible-pylibssh
-        run: pipx inject ansible-core ansible-pylibssh
-
-      - name: Install Paramiko
-        run: pipx inject ansible-core paramiko
+          fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
       - name: List files in playbooks directory
         run: ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
@@ -60,6 +40,30 @@ jobs:
       - name: Display the playbooks that changed
         run: cat playbooks.txt
 
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install paramiko
+
+      - name: Verify Paramiko Installation
+        run: |
+          python -m pip show paramiko
+
+      - name: Create Minimal Ansible Configuration
+        run: |
+          echo "[defaults]" > ansible.cfg
+          echo "inventory = /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory" >> ansible.cfg
+          echo "[ssh_connection]" >> ansible.cfg
+          echo "ssh_args = -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" >> ansible.cfg
+          echo "timeout = 30" >> ansible.cfg
+
+      - name: Print Environment Details
+        run: |
+          python --version
+          which python
+          pip --version
+          pip list
+
       - name: Run Ansible Playbooks
         if: success()
         run: |
@@ -75,3 +79,6 @@ jobs:
             exit 0
           fi
 
+      - name: Clean up
+        run: |
+          rm -f ansible.cfg
