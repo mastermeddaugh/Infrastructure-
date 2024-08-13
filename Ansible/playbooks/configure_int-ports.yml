@@ -6,7 +6,7 @@
     - cisco.ios
     - ansible.netcommon
   vars:
-    port_name: GigabitEthernet1/0/10
+    port_name: GigabitEthernet1/0/12
     port_description: "Meddaugh Death Star Tractor Beam"
     port_vlan: 10
     port_mode: access
