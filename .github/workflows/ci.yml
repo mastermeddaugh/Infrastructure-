@@ -35,10 +35,17 @@ jobs:
       - name: Install Paramiko
         run: pipx inject ansible-core paramiko
 
-      - name: Run Ansible Playbook
+      - name: Run Ansible Playbooks
+        if: success()
         run: |
-          ansible-playbook Ansible/playbooks/configure_int-ports.yml \
-          -i /home/runner/work/<REPO_NAME>/Ansible/inventory/hosts \
-          --log-path ansible.log
-        env:
-          ANSIBLE_CONFIG: Ansible/ansible.cfg
+          if [ -s playbooks.txt ]; then
+            while IFS= read -r playbook; do
+              # Remove leading path segments to get relative path
+              relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
+              echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
+              pipx run ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
+            done < playbooks.txt
+          else
+            echo "No playbooks to run."
+            exit 0
+          fi
