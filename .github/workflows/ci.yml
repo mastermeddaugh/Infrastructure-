@@ -1,4 +1,4 @@
-name: Run Ansible Playbook
+name: Run Ansible Playbooks
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run-playbook:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -16,14 +16,14 @@ jobs:
           fetch-depth: 2  # Ensure that we have at least two commits for comparison
 
       - name: List files in playbooks directory
-        run: ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
+        run: ls -l /home/runner/ansible/github-infrastructure-repo/Ansible/playbooks
 
       - name: Verify Directory Structure
         run: |
           echo "Listing playbooks directory:"
-          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks
+          ls -l /home/runner/ansible/github-infrastructure-repo/Ansible/playbooks
           echo "Listing inventory directory:"
-          ls -l /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory
+          ls -l /home/runner/ansible/github-infrastructure-repo/Ansible/inventory
 
       - name: Get the changed playbooks
         id: changed-playbooks
@@ -52,7 +52,7 @@ jobs:
       - name: Create Minimal Ansible Configuration
         run: |
           echo "[defaults]" > ansible.cfg
-          echo "inventory = /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory" >> ansible.cfg
+          echo "inventory = /home/runner/ansible/github-infrastructure-repo/Ansible/inventory" >> ansible.cfg
           echo "[ssh_connection]" >> ansible.cfg
           echo "ssh_args = -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" >> ansible.cfg
           echo "timeout = 30" >> ansible.cfg
@@ -71,14 +71,10 @@ jobs:
             while IFS= read -r playbook; do
               # Remove leading path segments to get relative path
               relative_playbook=$(echo "$playbook" | sed 's/^Ansible\/playbooks\///')
-              echo "Running playbook: /home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook"
-              ansible-playbook -i /home/runner/work/Infrastructure-/Infrastructure-/Ansible/inventory "/home/runner/work/Infrastructure-/Infrastructure-/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
+              echo "Running playbook: /home/runner/ansible/github-infrastructure-repo/Ansible/playbooks/$relative_playbook"
+              ansible-playbook -i /home/runner/ansible/github-infrastructure-repo/Ansible/inventory "/home/runner/ansible/github-infrastructure-repo/Ansible/playbooks/$relative_playbook" -vvv || { echo "Failed to run playbook: $relative_playbook"; exit 1; }
             done < playbooks.txt
           else
             echo "No playbooks to run."
             exit 0
           fi
-
-      - name: Clean up
-        run: |
-          rm -f ansible.cfg
