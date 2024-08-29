@@ -1,15 +1,14 @@
 ---
-- name: Shows all VLAN on Cisco switches
+- name: Run 'show vlan' on Cisco devices
   hosts: switches
   gather_facts: no
-  collections:
-    - cisco.ios
-    - ansible.netcommon
-
   tasks:
-    - name: Display VLANs on switches
-      ios_config:
-        lines:
-          - show vlan brief
+    - name: Execute show vlan command
+      ios_command:
+        commands: show vlan
+      register: vlan_output
 
-    
+    - name: Display VLAN command output
+      debug:
+        var: vlan_output.stdout_lines
+ 
