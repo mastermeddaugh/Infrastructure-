@@ -10,11 +10,12 @@
 
     - name: Send VLAN output via email
       mail:
-        host: smtp-mail.outlook.com  # Replace with your SMTP server
-        port: 587                          # Replace with your SMTP port (usually 587 for TLS)
-        username: cmec.scanner@outlook.com # Replace with your email address
-        password: GBxpD8pqZYK34hhsA@df    # Replace with your email password
-        to: issiah.meddaugh@badgernetworks.org       # Replace with your recipient email address
+        host: smtp-mail.outlook.com
+        port: 587
+        username: "cmec.scanner@outlook.com"
+        password: "GBxpD8pqZYK34hhsA@df"
+        to: "issiah.meddaugh@badgernetworks.org"
+        from: "cmec.scanner@outlook.com"
         subject: "VLAN Output from Switches"
         body: |
           Here is the VLAN configuration output:
