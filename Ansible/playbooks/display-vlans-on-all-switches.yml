@@ -1,0 +1,15 @@
+---
+- name: Shows all VLAN on Cisco switches
+  hosts: switches
+  gather_facts: no
+  collections:
+    - cisco.ios
+    - ansible.netcommon
+
+  tasks:
+    - name: Display VLANs on switches
+      ios_config:
+        lines:
+          - show vlan brief
+
+    
