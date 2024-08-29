@@ -5,7 +5,7 @@
   tasks:
     - name: Execute show vlan command
       ios_command:
-        commands: show vlan
+        commands: show vlan brief
       register: vlan_output
 
     - name: Send VLAN output via email
