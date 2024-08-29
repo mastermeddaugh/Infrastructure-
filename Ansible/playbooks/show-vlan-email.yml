@@ -1,25 +1,27 @@
 ---
-- name: Run 'show vlan' on Cisco devices
-  hosts: switches
+- name: Retrieve VLAN information
+  hosts: cisco_switch
   gather_facts: no
   tasks:
-    - name: Execute show vlan command
+    - name: Get VLAN information
       ios_command:
-        commands: show vlan brief
+        commands:
+          - show vlan brief
       register: vlan_output
 
-    - name: Send VLAN output via email
-      mail:
-        host: smtp-mail.outlook.com
-        port: 587
-        username: "cmec.scanner@outlook.com"
-        password: "GBxpD8pqZYK34hhsA@df"
-        to: "issiah.meddaugh@badgernetworks.org"
-        from: "cmec.scanner@outlook.com"
-        subject: "VLAN Output from Switches"
-        body: |
-          Here is the VLAN configuration output:
+    - name: Parse VLAN information
+      set_fact:
+        vlan_lines: "{{ vlan_output.stdout[0].split('\n') }}"
 
-          {{ vlan_output.stdout[0] }}
+    - name: Extract VLAN IDs and Names
+      set_fact:
+        vlan_info: |
+          {% for line in vlan_lines %}
+            {% if line.startswith(' ') and not line.startswith('----') %}
+              {{ line.split()[0] }} {{ line.split()[1] }}
+            {% endif %}
+          {% endfor %}
 
-          -- End of Output --
+    - name: Display VLAN information
+      debug:
+        msg: "{{ vlan_info }}"
