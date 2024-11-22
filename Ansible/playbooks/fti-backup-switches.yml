@@ -1,0 +1,15 @@
+---
+- name: Backup switch configuration to TFTP server
+  hosts: all_switches
+  gather_facts: false
+  vars:
+    tftp_server_ip: "10.15.72.9"
+
+  tasks:
+    - name: Backup running configuration to TFTP server
+      ansible.netcommon.cli_command:
+        command: "copy running-config tftp://{{ tftp_server_ip }}/Ansible-Switch-Backups/{{ inventory_hostname }}-running.cfg"
+        prompt:
+          - "Address or name of remote host"
+          - "Destination filename"
+        answer: "\n"

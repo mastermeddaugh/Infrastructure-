@@ -1,0 +1,189 @@
+
+all:
+####################
+# Network Switches #
+####################
+  children:
+    all_switches:
+      children:
+        all_9500_switches:
+          children:
+            az001: #Phoenix
+              hosts:
+                az001_switch1:
+                  ansible_host: 10.13.214.10
+            ftlab_01: #Sandbox
+              hosts:
+                ftlab01_switch1:
+                  ansible_host: 10.13.130.10
+                ftlab01_switch2:
+                  ansible_host: 10.13.130.11
+            test1: #Used to confirm ansible will fail
+              hosts:
+                issiah_testing_testy:
+                  ansible_host: 192.168.111.111
+            # Add branch switches sites here...
+        all_9300_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+        all_9200_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+        all_2960_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+
+            # Add more job sites here...
+        all_2960L_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+            leavenworth:
+              hosts:
+                leavenworth_switch1:
+                  ansible_host: 10.16.8.10
+            pry8a:
+              hosts:
+                pry8a_super_switch1:
+                  ansible_host: 10.16.4.11
+                pry8a_switch1:
+                  ansible_host: 10.16.4.10
+            pry_wh:
+              hosts:
+                pry_wh_switch1:
+                  ansible_host: 10.16.1.10
+            spc:
+              hosts:
+                spc_switch1:
+                  ansible_host: 10.16.170.10
+                spc_switch2:
+                  ansible_host: 10.16.170.11
+                spc_nib_switch2:
+                  ansible_host: 10.16.170.18
+                spc_inib_switch1:
+                  ansible_host: 10.16.170.16
+            uno:
+              hosts:
+                uno_switch1:
+                  ansible_host: 10.16.7.10
+                uno_switch2:
+                  ansible_host: 10.16.7.11
+            uno_trailer:
+              hosts:
+                uno_trailer_switch1:
+                  ansible_host: 10.16.12.10
+                uno_trailer_switch2:
+                  ansible_host: 10.16.12.11
+                uno_trailer_switch3:
+                  ansible_host: 10.16.12.12
+                uno_trailer_switch4:
+                  ansible_host: 10.16.12.13
+              
+            # Add more job sites here...
+        all_2960X_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+        all_2960CX_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+
+            # Add more job sites here...
+        all_nexus_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+            # Add more job sites here...
+        all_3560CX_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+
+            # Add more job sites here...
+
+#####################
+# Palo Alto Devices #
+#####################
+  # children:
+  #   all_palo_alto:
+      # children:
+      #   all_branch_palo_alto:
+      #     children:      
+      #       az001:
+      #         hosts:
+      #           az001_pa1:
+      #             ansible_host: 10.13.214.1
+      #       ftlab_01:
+      #         hosts:
+      #           ftlab01_pa1:
+      #             ansible_host: 10.13.130.1
+      #   all_jobsite_palo_alto:
+      #     children:      
+      #       az001:
+      #         hosts:
+      #           az001_pa1:
+      #             ansible_host: 10.13.214.1
+      #       ftlab_01:
+      #         hosts:
+      #           ftlab01_pa1:
+      #             ansible_host: 10.13.130.1
+
+#################
+# SDWAN Devices #
+################# 
+  # children:
+  #   all_sdwan:
+  #     children:
+  #       all_branch_sdwan:
+  #         children:      
+  #           az001:
+  #             hosts:
+  #               az001_cgx11:
+  #                 ansible_host: 10.13.214.1
+  #           ftlab_01:
+  #             hosts:
+  #               ftlab01_cgx11:
+  #                 ansible_host: 10.13.130.1     
+
+#######################################################
+# Variables - Will be changed later - Issiah Meddaugh #
+#######################################################
+ 
+  vars:
+    ansible_user: default_user
+    ansible_password: default_password
+    ansible_network_os: ios
+    ansible_connection: network_cli
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_become_password: default_password
