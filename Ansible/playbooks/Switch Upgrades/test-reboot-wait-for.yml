@@ -1,0 +1,94 @@
+---
+- name: Upgrade Cisco 9200 IOS Switch
+  hosts: ftlab01_switch5
+  gather_facts: no
+  vars:
+    tftp_server_ip: "10.15.72.9"
+    ios_image: "cat9k_lite_iosxe.17.12.04.SPA.bin"
+    expected_ios_version: "17.12.04"  # Define the expected IOS version
+    ansible_command_timeout: 4000  # Set timeout to a higher value
+    wait_delay: 5  # Initial delay before starting to check (20 minutes)
+    max_retries: 10  # Maximum number of retries
+    check_interval: 3  # Time to wait between checks (3 seconds)
+
+  tasks:
+    - name: Backup running configuration to TFTP server
+      ansible.netcommon.cli_command:
+        command: "copy running-config tftp://{{ tftp_server_ip }}/Ansible-Switch-Backups/{{ inventory_hostname }}-running.cfg"
+        prompt:
+          - "Address or name of remote host"
+          - "Destination filename"
+        answer: "\n"
+
+    - name: Verify IOS image in flash
+      ansible.netcommon.cli_command:
+        command: "dir flash:"
+      register: flash_output
+
+    - name: Check if IOS image is in flash
+      ansible.builtin.fail:
+        msg: "IOS image {{ ios_image }} not found in flash"
+      when: ios_image not in flash_output.stdout
+
+    - name: Display flash contents filtered for IOS image
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ flash_output.stdout_lines }}"
+      when: ios_image in item
+
+    - name: Check if IOS image is in flash
+      ansible.builtin.fail:
+        msg: "IOS image {{ ios_image }} not found in flash"
+      when: ios_image not in flash_output.stdout
+
+    - name: Set boot variable to new image
+      cisco.ios.ios_config:
+        lines:
+          - boot system flash:{{ ios_image }}
+
+    - name: Save configuration
+      ansible.netcommon.cli_command:
+        command: "write memory"
+
+    - name: Pause for user confirmation before reload
+      ansible.builtin.pause:
+        prompt: "The switch is ready to reload. Press Enter to continue or Ctrl+C to cancel."
+
+    - name: Reload switch to apply new image
+      ansible.netcommon.cli_command:
+        command: "reload"
+        prompt:
+          - "Proceed with reload"
+        answer: "yes"
+
+    - name: Wait for switch to come back online
+      block:
+        - name: Check SSH connection
+          ansible.builtin.wait_for_connection:
+            delay: 0
+            timeout: "{{ check_interval }}"
+          register: wait_result
+          until: wait_result is succeeded
+          retries: "{{ max_retries }}"
+          delay: "{{ check_interval }}"
+          ignore_errors: yes
+
+      rescue:
+        - name: Fail if switch does not come back online
+          ansible.builtin.fail:
+            msg: "Switch did not come back online in the expected time."
+
+    - name: Verify and check IOS version
+      ansible.builtin.command:
+        cmd: "show version"
+      register: version_output
+      changed_when: false
+
+    - name: Display current running IOS version
+      debug:
+        msg: "Current running IOS version: {{ version_output.stdout | regex_search('Cisco IOS XE Software, Version ([^\\n]+)', '\\1') }}"
+
+    - name: Fail if current IOS version does not match expected version
+      ansible.builtin.fail:
+        msg: "Current IOS version does not match expected version: {{ expected_ios_version }}"
+      when: "'Cisco IOS XE Software, Version ' + expected_ios_version not in version_output.stdout"

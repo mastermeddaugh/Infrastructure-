@@ -1,10 +1,9 @@
 ---
 - name: Upgrade Cisco 9200 IOS Switch
-  hosts: ftlab01_switch5
+  hosts: ftlab01_switch3
   gather_facts: no
   vars:
     tftp_server_ip: "10.15.72.9"
-    ios_image: "cat9k_lite_iosxe.17.12.04.SPA.bin"
     ansible_command_timeout: 4000  # Set timeout to a higher value
 
   tasks:
@@ -16,41 +15,9 @@
           - "Destination filename"
         answer: "\n"
 
-    - name: Verify IOS image in flash
+    - name: Upload new IOS image to switch from TFTP server
       ansible.netcommon.cli_command:
-        command: "dir flash:"
-      register: flash_output
-
-    - name: Check if IOS image is in flash
-      ansible.builtin.fail:
-        msg: "IOS image {{ ios_image }} not found in flash"
-      when: "'{{ ios_image }}' not in flash_output.stdout"
-
-    - name: Set boot variable to new image
-      cisco.ios.ios_config:
-        lines:
-          - boot system flash:{{ ios_image }}
-
-    - name: Save configuration
-      ansible.netcommon.cli_command:
-        command: "write memory"
-
-    - name: Pause for user confirmation before reload
-      ansible.builtin.pause:
-        prompt: "The switch is ready to reload. Press Enter to continue or Ctrl+C to cancel."
-
-    - name: Reload switch to apply new image
-      cisco.ios.ios_command:
-        commands:
-          - reload
-        confirm: yes
-
-    - name: Verify switch is running new image
-      cisco.ios.ios_command:
-        commands:
-          - show version
-      register: version_output
-
-    - name: Check new IOS version
-      debug:
-        msg: "New IOS version: {{ version_output }}"
+        command: "copy tftp://{{ tftp_server_ip }}/cat9k_lite_iosxe.17.12.04.SPA.bin flash:"
+        prompt:
+          - "Destination filename"
+        answer: "\n"
