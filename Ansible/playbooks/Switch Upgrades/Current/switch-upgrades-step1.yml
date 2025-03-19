@@ -1,0 +1,52 @@
+---
+- name: Show flash contents filtered for .bin files
+  hosts: all_9200_switches
+  gather_facts: no
+  vars:
+    ios_image_size: 470296483  # Size of the new IOS image in bytes
+  tasks:
+    - name: Run show flash command
+      ansible.netcommon.cli_command:
+        command: "show flash: | inc bin"
+      register: flash_output
+
+    - name: Count .bin files
+      set_fact:
+        bin_file_count: "{{ flash_output.stdout_lines | length }}"
+
+    - name: Display .bin file count and files
+      debug:
+        msg: >
+          {{ inventory_hostname }} - {{ bin_file_count }} bin files
+          {% for file in flash_output.stdout_lines %}
+          {{ file.split()[-1] }}
+          {% endfor %}
+
+    - name: Collect flash directory information
+      ios_command:
+        commands: "dir flash:"
+      register: flash_dir_output
+
+    - name: Parse available and total bytes
+      vars:
+        regex: "([0-9]+) bytes total \\(([0-9]+) bytes free\\)"
+      set_fact:
+        total_bytes: "{{ (flash_dir_output.stdout[0] | regex_findall(regex))[0][0] | int }}"
+        free_bytes: "{{ (flash_dir_output.stdout[0] | regex_findall(regex))[0][1] | int }}"
+
+    - name: Check if there is enough space to upload the new IOS image
+      set_fact:
+        can_upload_image: "{{ free_bytes | int >= ios_image_size }}"
+
+    - name: Display parsed values
+      debug:
+        msg: "Switch {{ inventory_hostname }}: Total Bytes = {{ total_bytes }}, Free Bytes = {{ free_bytes }}"
+
+    - name: Check if new IOS image can be uploaded
+      debug:
+        msg: |
+          {% if can_upload_image %}
+            ALL GOOD Required: {{ ios_image_size }} bytes, Available: {{ free_bytes }} bytes.
+          {% else %}
+            BAD Required: {{ ios_image_size }} bytes, Available: {{ free_bytes }} bytes.
+          {% endif %}

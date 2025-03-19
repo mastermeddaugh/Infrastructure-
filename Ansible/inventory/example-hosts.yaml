@@ -1,0 +1,381 @@
+all:
+####################
+# Network Switches #
+####################
+  children:
+    all_switches:
+      children:
+        all_9500_switches:
+          children:
+            az001: #Phoenix
+              hosts:
+                az001_switch1:
+                  ansible_host: 10.13.214.10
+            ftlab_01: #Sandbox
+              hosts:
+                ftlab01_switch1:
+                  ansible_host: 10.13.130.10
+                ftlab01_switch2:
+                  ansible_host: 10.13.130.11
+            test1: #Used to confirm ansible will fail
+              hosts:
+                issiah_testing_testy:
+                  ansible_host: 192.168.111.111
+            # Add branch switches sites here...
+        all_9300_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+        all_9200_switches:
+          children:
+            ft004:
+              hosts:
+                FT004-Switch8:
+                  ansible_host: 10.13.128.17
+                FT004-Switch2:
+                  ansible_host: 10.13.128.11
+                FT004-Switch3:
+                  ansible_host: 10.13.128.12
+                FT004-Switch5:
+                  ansible_host: 10.13.128.14
+                FT004-Switch7:
+                  ansible_host: 10.13.128.16
+                FT004-Switch9:
+                  ansible_host: 10.13.128.18
+            wi016:
+              hosts:
+                WI016-Switch4:
+                  ansible_host: 10.13.134.13
+                WI016-Switch7:
+                  ansible_host: 10.13.134.16
+                WI016-Switch8:
+                  ansible_host: 10.13.134.17
+                WI016-Switch2:
+                  ansible_host: 10.13.134.11
+                WI016-Switch3:
+                  ansible_host: 10.13.134.12
+                WI016-Switch5:
+                  ansible_host: 10.13.134.14
+                WI016-Switch6:
+                  ansible_host: 10.13.134.15
+            ftdc1:
+              hosts:
+                FTDC1-MGMT1:
+                  ansible_host: 10.13.100.11
+                FTDC1-ATTDIA:
+                  ansible_host: 10.13.100.12
+            ft003:
+              hosts:
+                FT003-Switch8:
+                  ansible_host: 10.13.104.11
+                FT003-Switch7:
+                  ansible_host: 10.13.104.12
+                FT003-Switch6:
+                  ansible_host: 10.13.104.13
+                FT003-Switch5:
+                  ansible_host: 10.13.104.14
+                FT003-Switch4:
+                  ansible_host: 10.13.104.16
+                FT003-Switch2:
+                  ansible_host: 10.13.104.17
+                FT003-Switch3:
+                  ansible_host: 10.13.104.18
+                FT003-Switch9:
+                  ansible_host: 10.13.104.19
+            wi005:
+              hosts:
+                WI005-Switch1:
+                  ansible_host: 10.13.108.10
+                WI005-Switch2:
+                  ansible_host: 10.13.108.11
+                WI005-Switch3:
+                  ansible_host: 10.13.108.12
+            wi003:
+              hosts:
+                WI003-Switch1:
+                  ansible_host: 10.13.112.10
+                WI003-Switch2:
+                  ansible_host: 10.13.112.11
+                WI003-Switch3:
+                  ansible_host: 10.13.112.12
+                WI003-Switch4:
+                  ansible_host: 10.13.112.13
+                WI003-Switch5:
+                  ansible_host: 10.13.112.14
+            ks002:
+              hosts:
+                KS002-Switch2:
+                  ansible_host: 10.13.120.11
+                KS002-Switch3:
+                  ansible_host: 10.13.120.12
+                KS002-Switch5:
+                  ansible_host: 10.13.120.14
+                KS002-Switch6:
+                  ansible_host: 10.13.120.15
+                KS002-Switch7:
+                  ansible_host: 10.13.120.16
+                KS002-Switch9:
+                  ansible_host: 10.13.120.18
+                KS002-Switch10:
+                  ansible_host: 10.13.120.19
+                KS002-Switch11:
+                  ansible_host: 10.13.120.20
+            ok001:
+              hosts:
+                OK001-Switch1:
+                  ansible_host: 10.13.124.10
+            wi001:
+              hosts:
+                WI001-Switch1:
+                  ansible_host: 10.13.140.10
+                WI001-Switch2:
+                  ansible_host: 10.13.140.11
+                WI001-Switch3:
+                  ansible_host: 10.13.140.12
+                WI001-Switch4:
+                  ansible_host: 10.13.140.13
+            wi011:
+              hosts:
+                WI011-Switch1:
+                  ansible_host: 10.13.144.10
+                WI011-Switch2:
+                  ansible_host: 10.13.144.11
+                WI011-Switch3:
+                  ansible_host: 10.13.144.12
+            wi008:
+              hosts:
+                WI008-Switch1:
+                  ansible_host: 10.13.148.10
+                WI008-Switch2:
+                  ansible_host: 10.13.148.11
+            ga001:
+              hosts:
+                GA001-Switch3:
+                  ansible_host: 10.13.160.12
+            wi004:
+              hosts:
+                WI004-Switch1:
+                  ansible_host: 10.13.168.10
+                WI004-Switch2:
+                  ansible_host: 10.13.168.11
+            ft002:
+              hosts:
+                FT002-Switch1:
+                  ansible_host: 10.13.188.10
+            tn001:
+              hosts:
+                TN001-Switch1:
+                  ansible_host: 10.13.192.10
+                TN001-Switch2:
+                  ansible_host: 10.13.192.11
+                TN001-Switch3:
+                  ansible_host: 10.13.192.12
+            ga002:
+              hosts:
+                GA002-Switch2:
+                  ansible_host: 10.13.196.11
+            wi013:
+              hosts:
+                WI013-Switch1:
+                  ansible_host: 10.13.208.10
+                WI013-Switch2:
+                  ansible_host: 10.13.208.11
+                WI013-Switch3:
+                  ansible_host: 10.13.208.12
+            wi015:
+              hosts:
+                WI015-Switch1:
+                  ansible_host: 10.13.212.10
+                WI015-Switch2:
+                  ansible_host: 10.13.212.11
+            ks001:
+              hosts:
+                KS001-Switch1:
+                  ansible_host: 10.13.213.10
+                KS001-Switch2:
+                  ansible_host: 10.13.213.11
+            az001:
+              hosts:
+                AZ001-Switch1:
+                  ansible_host: 10.13.214.10
+            knc1a_dc2:
+              hosts:
+                KNC1A-DC2-SWITCH1:
+                  ansible_host: 10.16.13.10
+            leavenworth:
+              hosts:
+                Leavenworth-Switch1:
+                  ansible_host: 10.16.8.10
+            ranch:
+              hosts:
+                Ranch-Switch1:
+                  ansible_host: 10.17.142.10
+                Ranch-Switch3:
+                  ansible_host: 10.17.142.12
+            ks003:
+              hosts:
+                KS003-Switch2:
+                  ansible_host: 10.17.142.11
+                KS003-Ehouse_Switch1:
+                  ansible_host: 10.17.142.13
+            id001:
+              hosts:
+                ID001-Switch1:
+                  ansible_host: 10.17.149.131
+                ID001-Switch2:
+                  ansible_host: 10.17.149.132
+        all_2960_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+
+            # Add more job sites here...
+        all_2960L_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+            leavenworth:
+              hosts:
+                leavenworth_switch1:
+                  ansible_host: 10.16.8.10
+            pry8a:
+              hosts:
+                pry8a_super_switch1:
+                  ansible_host: 10.16.4.11
+                pry8a_switch1:
+                  ansible_host: 10.16.4.10
+            pry_wh:
+              hosts:
+                pry_wh_switch1:
+                  ansible_host: 10.16.1.10
+            spc:
+              hosts:
+                spc_switch1:
+                  ansible_host: 10.16.170.10
+                spc_switch2:
+                  ansible_host: 10.16.170.11
+                spc_nib_switch2:
+                  ansible_host: 10.16.170.18
+                spc_inib_switch1:
+                  ansible_host: 10.16.170.16
+            uno:
+              hosts:
+                uno_switch1:
+                  ansible_host: 10.16.7.10
+                uno_switch2:
+                  ansible_host: 10.16.7.11
+            uno_trailer:
+              hosts:
+                uno_trailer_switch1:
+                  ansible_host: 10.16.12.10
+                uno_trailer_switch2:
+                  ansible_host: 10.16.12.11
+                uno_trailer_switch3:
+                  ansible_host: 10.16.12.12
+                uno_trailer_switch4:
+                  ansible_host: 10.16.12.13
+              
+            # Add more job sites here...
+        all_2960X_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+        all_2960CX_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+
+            # Add more job sites here...
+        all_nexus_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+            # Add more job sites here...
+        all_3560CX_switches:
+          children:
+            knc1a:
+              hosts:
+                knc1a_switch1:
+                  ansible_host: 10.16.6.10
+            knc1a_dc2:
+              hosts:
+                knc1a_dc2_switch1:
+                  ansible_host: 10.16.13.10
+
+            # Add more job sites here...
+
+#####################
+# Palo Alto Devices #
+#####################
+  # children:
+  #   all_palo_alto:
+      # children:
+      #   all_branch_palo_alto:
+      #     children:      
+      #       az001:
+      #         hosts:
+      #           az001_pa1:
+      #             ansible_host: 10.13.214.1
+      #       ftlab_01:
+      #         hosts:
+      #           ftlab01_pa1:
+      #             ansible_host: 10.13.130.1
+      #   all_jobsite_palo_alto:
+      #     children:      
+      #       az001:
+      #         hosts:
+      #           az001_pa1:
+      #             ansible_host: 10.13.214.1
+      #       ftlab_01:
+      #         hosts:
+      #           ftlab01_pa1:
+      #             ansible_host: 10.13.130.1
+
+#################
+# SDWAN Devices #
+################# 
+  # children:
+  #   all_sdwan:
+  #     children:
+  #       all_branch_sdwan:
+  #         children:      
+  #           az001:
+  #             hosts:
+  #               az001_cgx11:
+  #                 ansible_host: 10.13.214.1
+  #           ftlab_01:
+  #             hosts:
+  #               ftlab01_cgx11:
+  #                 ansible_host: 10.13.130.1     
+
+#######################################################
+# Variables - Will be changed later - Issiah Meddaugh #
+#######################################################
+ 
+  vars:
+    ansible_user: default_user
+    ansible_password: default_password
+    ansible_network_os: ios
+    ansible_connection: network_cli
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_become_password: default_password
