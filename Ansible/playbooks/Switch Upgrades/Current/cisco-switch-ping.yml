@@ -1,0 +1,8 @@
+---
+- name: Ping all Cisco switches
+  hosts: ftlab_01
+  gather_facts: no
+
+  tasks:
+    - name: Ping Cisco switches
+      ansible.builtin.ping:

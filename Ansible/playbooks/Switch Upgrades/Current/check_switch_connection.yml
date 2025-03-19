@@ -1,0 +1,15 @@
+---
+- name: Check switch connectivity by getting hostname
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Get hostname
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include hostname
+      register: show_hostname_output
+
+    - name: Print hostname
+      debug:
+        msg: "{{ show_hostname_output.stdout_lines }}"
